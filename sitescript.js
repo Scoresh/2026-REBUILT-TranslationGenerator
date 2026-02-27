@@ -53,8 +53,6 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
     var appendNodes = [];
     var destroyNodes = [];
     var previous = null;
-    // create previous "left click node" to work with poses
-    var currentNode = null;    
     // global constant variable, set to 0, to count how many objects "exist" and to be used as a path
     var translationCount = 0;
 
@@ -96,6 +94,9 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
                     if (previous != null) {
                         console.log("Right Button Pressed.");   
                         if (!epsilonEquals2D(previous, newLoggedButton)) {
+                            console.log("DEBUG ", previous.generateSemicolon())
+                            console.log("DEBUG OTHER", newLoggedButton.generateSemicolon());
+                            console.log(epsilonEquals2D(previous,newLoggedButton))
                             newLoggedButton.updateCounter();
                             newLoggedButton = new SavedPose(
                                 previous.getTranslation(),
@@ -109,6 +110,7 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
                     break;
                 default: break;
             }
+            // post 
             updateButtons();
             updatePoints();
         }
@@ -120,8 +122,8 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
     // varEpsilon, in this case, is 5 pixels. (because I am doing a pythagorean theorum but not rooting it for computation sake.)
     const varianceEpsilonSquared = 25;
     function epsilonEquals2D(before, after) {
-        return Math.pow(Math.abs(before.translationX - after.translationX),2)
-             + Math.pow(Math.abs(before.translationY - after.translationY),2) 
+        return Math.pow(Math.abs(before.getX() - after.getX()),2)
+             + Math.pow(Math.abs(before.getY() - after.getY()),2) 
                     < varianceEpsilonSquared;
     } 
 
