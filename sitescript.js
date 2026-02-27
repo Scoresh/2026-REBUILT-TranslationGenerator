@@ -1,3 +1,15 @@
+// AUTHOR DANIEL SABALAKOV, https://github.com/Scoresh, 5902 Wire Clippers 
+
+const rainbowcolors = [
+    "red",
+    "orange",
+    "yellow",
+    "green",
+    "blue",
+    "indigo",
+    "violet"
+]
+
 // make sure everything is loaded
 document.addEventListener('DOMContentLoaded', (loadedEvent) => {
     // calculate window
