@@ -121,6 +121,7 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
             // post 
             updateButtons();
             updatePoints();
+            clearAppendix();
         }
         
     );
@@ -136,22 +137,24 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
     } 
 
     function createPoint() {
+        // create div 
+        var div = document.createElement()
+    }
+
+    function updatePoints() {
+
+    }
+
+    function updateAllPoints() {
         
     }
 
-
-
-    function updatePoints() {
-        console.log("----------------DIVIDER--------------------");
-        for (const i of allNodes) {
-            console.log(i.generateString());
-        }
-        console.log("-------------------------------------------");
+    function updateButtons() {
 
     }
 
-    function updateButtons() {
-        console.log("Translation Count: ", translationCount);
+    function clearAppendix() {
+        appendNodes = [];
     }
 
     class SavedTranslation  {
@@ -161,6 +164,7 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
         constructor(translationX, translationY) {
             this.translationX = translationX;
             this.translationY = translationY;
+
         }
         updateCounter() {
             translationCount++;
