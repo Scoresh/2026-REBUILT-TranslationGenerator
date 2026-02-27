@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
     var allNodes = [];
     var appendNodes = [];
     var destroyNodes = [];
-
+    var previous = null;
     // create previous "left click node" to work with poses
     var currentNode = null;    
     // global constant variable, set to 0, to count how many objects "exist" and to be used as a path
@@ -79,9 +79,15 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
                     if (previous != null) {                            
                         // if the two are close together, set previous to hypothetical new. do NOT append. 
                         if (!epsilonEquals2D(previous, newLoggedButton)) {
+                            newLoggedButton.updateCounter();
                             allNodes.push(newLoggedButton);
                             appendNodes.push(newLoggedButton);
                         }
+                    } else {
+                        // n'th case to begin
+                        newLoggedButton.updateCounter();
+                        allNodes.push(newLoggedButton);
+                        appendNodes.push(newLoggedButton);
                     }
                     previous = newLoggedButton;
                     break;
@@ -90,13 +96,15 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
                     if (previous != null) {
                         console.log("Right Button Pressed.");   
                         if (!epsilonEquals2D(previous, newLoggedButton)) {
+                            newLoggedButton.updateCounter();
                             newLoggedButton = new SavedPose(
-                                newLoggedButton,
-                                SavedPose.calculateAngle() // x, y
+                                previous.getTranslation(),
+                                SavedPose.calculateAngle(newLoggedButton.getX() - previous.getX(), previous.getY() -  newLoggedButton.getY()) // x, y
                             );
                             allNodes.push(newLoggedButton);
                             appendNodes.push(newLoggedButton);
                         }
+                        previous = newLoggedButton;
                     }
                     break;
                 default: break;
@@ -110,20 +118,25 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
     // epsilon is large on purpose. 
     // tune to needs (how many absolute pixels should the mouse move to be considered a pose VERSUS a translation? )
     // varEpsilon, in this case, is 5 pixels. (because I am doing a pythagorean theorum but not rooting it for computation sake.)
-    const varEpsilon = 25;
+    const varianceEpsilonSquared = 25;
     function epsilonEquals2D(before, after) {
         return Math.pow(Math.abs(before.translationX - after.translationX),2)
              + Math.pow(Math.abs(before.translationY - after.translationY),2) 
-                    < varEpsilon;
+                    < varianceEpsilonSquared;
     } 
 
     function createPoint() {
-
+        
     }
 
 
 
     function updatePoints() {
+        console.log("----------------DIVIDER--------------------");
+        for (const i of allNodes) {
+            console.log(i.generateString());
+        }
+        console.log("-------------------------------------------");
 
     }
 
@@ -138,6 +151,8 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
         constructor(translationX, translationY) {
             this.translationX = translationX;
             this.translationY = translationY;
+        }
+        updateCounter() {
             translationCount++;
         }
         generate() {
@@ -166,6 +181,9 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
         getY() {
             return this.translationY;
         }
+        getTranslation() {
+            return this;
+        }
 
     }
 
@@ -176,7 +194,9 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
             this.translation = translation;
             this.angle = angle;
         }
-
+        updateCounter() {
+            translationCount++;
+        }
         static calculateAngle(x, y){
             return Math.atan2(y,x);
         }
@@ -206,7 +226,9 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
         getY() {
             return this.translation.translationY;
         }
-
+        getTranslation() {
+            return this.translation;
+        }
     }
 
 
