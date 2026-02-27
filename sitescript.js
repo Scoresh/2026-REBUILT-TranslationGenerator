@@ -52,6 +52,7 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
     var allNodes = [];
     var appendNodes = [];
     var destroyNodes = [];
+    var hideNodes = [];
     var previous = null;
     // global constant variable, set to 0, to count how many objects "exist" and to be used as a path
     var translationCount = 0;
@@ -98,14 +99,21 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
                             console.log("DEBUG OTHER", newLoggedButton.generateSemicolon());
                             console.log(epsilonEquals2D(previous,newLoggedButton))
                             newLoggedButton.updateCounter();
+                            // saving data for previous
+                            var tempx = newLoggedButton.getX();
+                            var tempy = newLoggedButton.getY();
                             newLoggedButton = new SavedPose(
                                 previous.getTranslation(),
-                                SavedPose.calculateAngle(newLoggedButton.getX() - previous.getX(), previous.getY() -  newLoggedButton.getY()) // x, y
+                                SavedPose.calculateAngle(tempx - previous.getX(), previous.getY() - tempy) // x, y
                             );
+                            // pop out the last one
+                            allNodes.pop();
+                            appendNodes.pop();
+                            translationCount--;
                             allNodes.push(newLoggedButton);
                             appendNodes.push(newLoggedButton);
+                            previous = new SavedTranslation(tempx, tempy);
                         }
-                        previous = newLoggedButton;
                     }
                     break;
                 default: break;
