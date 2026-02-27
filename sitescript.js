@@ -1,15 +1,22 @@
 // make sure everything is loaded
 document.addEventListener('DOMContentLoaded', (loadedEvent) => {
-
-    
-
-    console.log("DOM IS LOADED");
+    // create previous "left click node" to work with poses
+    var previous = null;    
+    // global constant variable, set to 0, to count how many objects "exist" and to be used as a path
+    var translationCount = 0;
     // tune to needs (how many absolute pixels should the mouse move to be considered a pose VERSUS a translation? )
     const varEpsilon = 1.0;
 
-    
+    // IMPORTANT ==> This is where the calculations based on REAL constants
+    var imageWidth;
+    var imageLength;
+
+    // Constants
+    var fieldWidthMeters = 0;
+    var fieldLengthMeters = 0;
+
     // prevent right click window on FIELD
-    document.getElementById("FIELD").addEventListener("contextmenu", function(){return false;});
+    document.getElementById("FIELD").addEventListener("contextmenu", function(e){e.preventDefault();return false;});
 
     // Calculate Translation and Pose
     document.getElementById("FIELD")
@@ -19,6 +26,10 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
             switch (event.button) {
                 case 0: //LEFT
                     console.log("Left Button Pressed.");
+                    previous = new SavedTranslation(
+                        event.clientX,
+                        event.clientY
+                    );
                     break;
                 case 2: //RIGHT
                     if (previous != null) {
@@ -27,23 +38,34 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
                     break;
                 default: break;
             }
+            updateButtons();
+            updatePoints();
         }
         
     );
 
 
-    function updateButtons() {
+
+
+
+
+
+    function updatePoints() {
 
     }
 
+    function updateButtons() {
+        console.log("Translation Count: ", translationCount);
+    }
+
     class SavedTranslation  {
-        num = 0;
         translationX = 0;
         translationY = 0;
         visible = false;
         constructor(translationX, translationY) {
             this.translationX = translationX;
             this.translationY = translationY;
+            translationCount++;
         }
         generate() {
 
