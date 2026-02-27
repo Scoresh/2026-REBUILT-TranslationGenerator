@@ -15,6 +15,23 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
     var fieldWidthMeters = 0;
     var fieldLengthMeters = 0;
 
+    window.addEventListener('resize', debounce(function(event) {
+        const newWidth = window.innerWidth;
+        const newHeight = window.innerHeight;
+        console.log(`New size: ${newWidth}x${newHeight}`);
+        
+    }),100);
+    
+    // Debounce function
+    function debounce(func, delay) {
+        let timeout;
+        return function (...args) {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                func.apply(this, args);
+            }, delay);
+        };
+    }
     // prevent right click window on FIELD
     document.getElementById("FIELD").addEventListener("contextmenu", function(e){e.preventDefault();return false;});
 
