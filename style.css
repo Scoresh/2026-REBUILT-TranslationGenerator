@@ -1,10 +1,13 @@
 :root {
-    --primary-color: #550000;
+    --primary-color: #300000;
     --secondary-color: #D3AF37;
     --tertiary-color: #ffffc4;
+    
 }
 
-
+body {
+    background-color:var(--primary-color);
+}
 
 
 .fullwidth {

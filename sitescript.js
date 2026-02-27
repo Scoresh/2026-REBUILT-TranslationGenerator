@@ -19,8 +19,8 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
         const fieldimage = document.createElement("img");
         fieldimage.src = "images/field_cropped.png";
         fieldimage.alt = "Vertical image of the FRC 2026 Game Field";
-        fieldimage.style.width = "auto";
-        fieldimage.style.height = "auto";
+        fieldimage.style.width = "100%";
+        fieldimage.style.height = "100%";
         field.appendChild(fieldimage)
     }
     drawImage();
