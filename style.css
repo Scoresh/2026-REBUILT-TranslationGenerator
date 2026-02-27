@@ -1,0 +1,17 @@
+:root {
+    --primary-color: #550000;
+    --secondary-color: #D3AF37;
+}
+
+.fullwidth {
+    width:100%;
+    background-color: var(--primary-color)
+}
+
+.BUTTON_FACTORY {
+    background-color: var(--secondary-color);
+    display: flex;
+    flex-direction:row;
+    color: var(--secondary-color);
+    
+}

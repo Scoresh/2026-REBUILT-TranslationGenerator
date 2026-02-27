@@ -1,42 +1,56 @@
 // make sure everything is loaded
 document.addEventListener('DOMContentLoaded', (loadedEvent) => {
+    // When site is first loaded, populate the FIELD div with the image and instantiate various variables
+    const field = document.getElementById("FIELD");
+    function drawImage() {
+        const fieldimage = document.createElement("img");
+        fieldimage.src = "images/field_cropped.png";
+        fieldimage.alt = "Vertical image of the FRC 2026 Game Field";
+        fieldimage.width = "500";
+        field.appendChild(fieldimage)
+    }
+    drawImage();
+
+    // IMPORTANT ==> This is where the calculations based on REAL constants
+    var imageWidth;
+    var imageHeight;
+
+    function updateImageData() {
+        imageWidth = field.childNodes[1].width;
+        imageHeight = field.childNodes[1].width * field.childNodes[1].naturalHeight / field.childNodes[1].naturalWidth;
+    }
+    updateImageData();
+    console.log(imageWidth + "BLAH" +  imageHeight)
+
+    // Now that we have created the field, let's define our arrays: nodes   
+    var allNodes = [];
+    var appendNodes = [];
+    var destroyNodes = [];
+
     // create previous "left click node" to work with poses
-    var previous = null;    
+    var currentNode = null;    
     // global constant variable, set to 0, to count how many objects "exist" and to be used as a path
     var translationCount = 0;
     // tune to needs (how many absolute pixels should the mouse move to be considered a pose VERSUS a translation? )
     const varEpsilon = 1.0;
 
-    // IMPORTANT ==> This is where the calculations based on REAL constants
-    var imageWidth;
-    var imageLength;
 
     // Constants
-    var fieldWidthMeters = 0;
-    var fieldLengthMeters = 0;
+    var fieldXMeters = 0;
+    var fieldYMeters = 0;
 
-    window.addEventListener('resize', debounce(function(event) {
+    window.addEventListener('resize', function(event) {
         const newWidth = window.innerWidth;
         const newHeight = window.innerHeight;
         console.log(`New size: ${newWidth}x${newHeight}`);
         
-    }),100);
-    
-    // Debounce function
-    function debounce(func, delay) {
-        let timeout;
-        return function (...args) {
-            clearTimeout(timeout);
-            timeout = setTimeout(() => {
-                func.apply(this, args);
-            }, delay);
-        };
-    }
+    });
+   
     // prevent right click window on FIELD
-    document.getElementById("FIELD").addEventListener("contextmenu", function(e){e.preventDefault();return false;});
+    field.addEventListener("contextmenu", function(e){e.preventDefault();return false;});
 
     // Calculate Translation and Pose
-    document.getElementById("FIELD")
+    field
         .addEventListener("mousedown", 
         (event) => {
             // create translation
@@ -47,6 +61,7 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
                         event.clientX,
                         event.clientY
                     );
+                    appendNodes.push(previous);
                     break;
                 case 2: //RIGHT
                     if (previous != null) {
@@ -63,12 +78,17 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
 
 
 
+    function createPoint() {
 
+    }
 
 
 
     function updatePoints() {
 
+        for (const i of translationsAndPoses) {
+            
+        }
     }
 
     function updateButtons() {
@@ -85,16 +105,23 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
             translationCount++;
         }
         generate() {
-
+            return "new Translation2d(" + this.translationX + ", " + this.translationY + " )";
         }
-        mirror () {
-
+        generateSemicolon() {
+            return this.generate() + ";";
         }
-        destroy() {
+        mirrorAllianceFlip() {
+            translationX = fieldXMeters - translationX;
+            translationY = fieldYMeters - translationY;
+        }
+        hide() {
             this.visible = false;
         }
-        generateHtml() {
+        generateNode() {
 
+        }
+        generateString() {
+            return "Translation2d: X: " + this.translationX + " Y: " + this.translationY;
         }
 
     }
@@ -111,16 +138,36 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
             return Math.atan2(y,x);
         }
         generate() {
-
+            return "new Pose2d(" + this.translation.generate() + ", Rotation2d.fromRadians(" + this.angle + "))";
         }
-        mirror () {
-
+        generateSemicolon() {
+            return this.generate() + ";";
         }
-        destroy() {
+        mirrorAllianceFlip() {
+            this.translation.mirrorAllianceFlip();
+            this.angle = (angle + Math.PI) % (2 * Math.PI);
+        }
+        hide() {
             this.visible = false;
         }
-        generateHtml() {
-
+        generateNode() {
+            return 
         }
+        generateString() {
+            return "Pose2d: " + this.translation.generateString() + ", with an angle of " + this.angle + " radians.";
+        }
+
     }
+
+
+
+
+    function getDataFROMField(x, y) {
+        
+    }
+
+    function getDataINTOField() {
+
+    }
+
 });
