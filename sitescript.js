@@ -1,12 +1,26 @@
 // make sure everything is loaded
 document.addEventListener('DOMContentLoaded', (loadedEvent) => {
+    // calculate window
+    var newWidth;
+    var newHeight;
+    window.addEventListener('resize', event => updateAndLogWindow(event));
+
+    function updateAndLogWindow(event) {
+        newWidth = window.innerWidth;
+        newHeight = window.innerHeight;
+        console.log(`Window Size: ${newWidth}x${newHeight}`);
+        
+    }
+    updateAndLogWindow(null);
+
     // When site is first loaded, populate the FIELD div with the image and instantiate various variables
     const field = document.getElementById("FIELD");
     function drawImage() {
         const fieldimage = document.createElement("img");
         fieldimage.src = "images/field_cropped.png";
         fieldimage.alt = "Vertical image of the FRC 2026 Game Field";
-        fieldimage.width = "500";
+        fieldimage.style.width = "auto";
+        fieldimage.style.height = "auto";
         field.appendChild(fieldimage)
     }
     drawImage();
@@ -39,12 +53,6 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
     var fieldXMeters = 0;
     var fieldYMeters = 0;
 
-    window.addEventListener('resize', function(event) {
-        const newWidth = window.innerWidth;
-        const newHeight = window.innerHeight;
-        console.log(`New size: ${newWidth}x${newHeight}`);
-        
-    });
    
     // prevent right click window on FIELD
     field.addEventListener("contextmenu", function(e){e.preventDefault();return false;});
