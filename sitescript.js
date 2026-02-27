@@ -57,8 +57,6 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
     var currentNode = null;    
     // global constant variable, set to 0, to count how many objects "exist" and to be used as a path
     var translationCount = 0;
-    // tune to needs (how many absolute pixels should the mouse move to be considered a pose VERSUS a translation? )
-    const varEpsilon = 1.0;
 
 
     // Constants
@@ -77,15 +75,28 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
             switch (event.button) {
                 case 0: //LEFT
                     console.log("Left Button Pressed.");
-                    previous = new SavedTranslation(
-                        event.clientX,
-                        event.clientY
-                    );
-                    appendNodes.push(previous);
+                    var newLoggedButton = new SavedTranslation(event.clientX, event.clientY);
+                    if (previous != null) {                            
+                        // if the two are close together, set previous to hypothetical new. do NOT append. 
+                        if (!epsilonEquals2D(previous, newLoggedButton)) {
+                            allNodes.push(newLoggedButton);
+                            appendNodes.push(newLoggedButton);
+                        }
+                    }
+                    previous = newLoggedButton;
                     break;
                 case 2: //RIGHT
+                    var newLoggedButton = new SavedTranslation(event.clientX, event.clientY);
                     if (previous != null) {
-                        console.log("Right Button Pressed AND not null");   
+                        console.log("Right Button Pressed.");   
+                        if (!epsilonEquals2D(previous, newLoggedButton)) {
+                            newLoggedButton = new SavedPose(
+                                newLoggedButton,
+                                SavedPose.calculateAngle() // x, y
+                            );
+                            allNodes.push(newLoggedButton);
+                            appendNodes.push(newLoggedButton);
+                        }
                     }
                     break;
                 default: break;
@@ -96,7 +107,15 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
         
     );
 
-
+    // epsilon is large on purpose. 
+    // tune to needs (how many absolute pixels should the mouse move to be considered a pose VERSUS a translation? )
+    // varEpsilon, in this case, is 5 pixels. (because I am doing a pythagorean theorum but not rooting it for computation sake.)
+    const varEpsilon = 25;
+    function epsilonEquals2D(before, after) {
+        return Math.pow(Math.abs(before.translationX - after.translationX),2)
+             + Math.pow(Math.abs(before.translationY - after.translationY),2) 
+                    < varEpsilon;
+    } 
 
     function createPoint() {
 
@@ -106,9 +125,6 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
 
     function updatePoints() {
 
-        for (const i of translationsAndPoses) {
-            
-        }
     }
 
     function updateButtons() {
@@ -144,6 +160,13 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
             return "Translation2d: X: " + this.translationX + " Y: " + this.translationY;
         }
 
+        getX(){
+            return this.translationX;
+        }
+        getY() {
+            return this.translationY;
+        }
+
     }
 
     class SavedPose {
@@ -175,6 +198,13 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
         }
         generateString() {
             return "Pose2d: " + this.translation.generateString() + ", with an angle of " + this.angle + " radians.";
+        }
+
+        getX(){
+            return this.translation.translationX;
+        }
+        getY() {
+            return this.translation.translationY;
         }
 
     }
