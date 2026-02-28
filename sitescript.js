@@ -115,7 +115,8 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
                             var tempx = newLoggedButton.getX();
                             var tempy = newLoggedButton.getY();
                             newLoggedButton = new SavedPose(
-                                previous.getTranslation(),
+                                previous.getX(),
+                                previous.getY(),
                                 SavedPose.calculateAngle(tempx - previous.getX(), previous.getY() - tempy) // x, y
                             );
                             // pop out the last one
