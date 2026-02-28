@@ -27,8 +27,8 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
         const fieldimage = document.createElement("img");
         fieldimage.src = "images/field_cropped.png";
         fieldimage.alt = "Vertical image of the FRC 2026 Game Field";
+        fieldimage.id = "FIELD_IMAGE"
         fieldimage.style.width = "100%";
-        fieldimage.style.border = "5px solid red";
         fieldimage.style.position = "absolute"
         field.appendChild(fieldimage)
     }
@@ -56,10 +56,13 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
     
 
     function updateImageData() {
-        imageWidth = field.firstChild.width;
-        console.log(field.firstChild.naturalHeight)
-        console.log(field.firstChild.naturalWidth)
-        imageHeight = field.firstChild.width * field.firstChild.naturalHeight / field.firstChild.naturalWidth;
+        image = document.getElementById('FIELD_IMAGE');
+        imageWidth = image.clientWidth;
+        // constant height: 505 px width: 1035 px
+        const dims = 505.0 / 1035.0;
+        imageHeight = imageWidth * dims;
+        console.log(`Image Size: ${imageWidth}x${imageHeight}`);
+
     }
     updateImageData();
 
@@ -92,7 +95,7 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
             // create translation
             switch (event.button) {
                 case 0: //LEFT
-                    newLoggedButton = new SavedTranslation(offsetX, offsetY);
+                    newLoggedButton = new SavedTranslation(toFieldMeters(offsetX, offsetY)[0], toFieldMeters(offsetX, offsetY)[1]);
                     if (previous != null) {                            
                         // if the two are close together, set previous to hypothetical new. do NOT append. 
                         if (!epsilonEquals2D(previous, newLoggedButton)) {
@@ -111,7 +114,7 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
                     }
                     break;
                 case 2: //RIGHT
-                    newLoggedButton = new SavedTranslation(offsetX, offsetY);
+                    newLoggedButton = new SavedTranslation(toFieldMeters(offsetX, offsetY)[0], toFieldMeters(offsetX, offsetY)[1]);
                     if (previous != null) {
                         let tempx = newLoggedButton.getX();
                         let tempy = newLoggedButton.getY();
@@ -165,8 +168,8 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
                 let boxxed_div = document.createElement('div');
                 console.log("updating points");
                 boxxed_div.style.backgroundColor = rainbowcolors[rainbowIndice++] % rainbowcolors.length;
-                boxxed_div.style.left = i.getX() + "px";
-                boxxed_div.style.top =  i.getY() + "px";
+                boxxed_div.style.left = getDataINTOField(i.getX(), i.getY())[0] + "px";
+                boxxed_div.style.top =  getDataINTOField(i.getX(), i.getY())[1] + "px";
                 boxxed_div.innerHTML = "BKAH ASDJKHASDHKJASHDKJHASKJDH"
                 boxxed_div.style.position = "absolute"
                 boxxed_div.style.zIndex = zindice++;
@@ -270,12 +273,20 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
 
 
 
-    function getDataFROMField(x, y) {
-        
+    function toFieldMeters(x, y) {
+        updateImageData();
+        returnX = x * fieldXMeters / imageWidth;
+        returnY = y * fieldYMeters / imageHeight;
+
+        return [returnX, returnY];
     }
 
-    function getDataINTOField() {
+    function getDataINTOField(metersX, metersY) {
+        updateImageData();
+        returnX = imageWidth * metersX / fieldXMeters;
+        returnY = imageHeight * metersY / fieldYMeters;
 
+        return [returnX, returnY];
     }
 
 });
