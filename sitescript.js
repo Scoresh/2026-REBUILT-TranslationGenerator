@@ -109,11 +109,11 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
                 case 2: //RIGHT
                     newLoggedButton = new SavedTranslation(event.offsetX, event.offsetY);
                     if (previous != null) {
+                        let tempx = newLoggedButton.getX();
+                        let tempy = newLoggedButton.getY();
                         if (!epsilonEquals2D(previous, newLoggedButton)) {
                             newLoggedButton.updateCounter();
                             // saving data for previous
-                            var tempx = newLoggedButton.getX();
-                            var tempy = newLoggedButton.getY();
                             newLoggedButton = new SavedPose(
                                 previous.getX(),
                                 previous.getY(),
@@ -125,8 +125,9 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
                             translationCount--;
                             allNodes.push(newLoggedButton);
                             appendNodes.push(newLoggedButton);
-                            previous = new SavedTranslation(tempx, tempy);
-                        }
+                        }                            
+                        previous = new SavedTranslation(tempx, tempy);
+
                     }
                     break;
                 default: return;
