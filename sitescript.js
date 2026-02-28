@@ -1,5 +1,7 @@
 // AUTHOR DANIEL SABALAKOV, https://github.com/Scoresh, 5902 Wire Clippers 
 
+// begin rainbow indice at negative one because logic adds one then takes the modulo.
+let rainbowIndice = -1;
 const rainbowcolors = [
     "red",
     "orange",
@@ -12,19 +14,6 @@ const rainbowcolors = [
 
 // make sure everything is loaded
 document.addEventListener('DOMContentLoaded', (loadedEvent) => {
-    // calculate window
-    var newWidth;
-    var newHeight;
-    window.addEventListener('resize', event => updateAndLogWindow(event));
-
-    function updateAndLogWindow(event) {
-        newWidth = window.innerWidth;
-        newHeight = window.innerHeight;
-        console.log(`Window Size: ${newWidth}x${newHeight}`);
-        
-    }
-    updateAndLogWindow(null);
-
     // When site is first loaded, populate the FIELD div with the image and instantiate various variables
     const field = document.getElementById("FIELD");
     function drawImage() {
@@ -32,40 +21,62 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
         fieldimage.src = "images/field_cropped.png";
         fieldimage.alt = "Vertical image of the FRC 2026 Game Field";
         fieldimage.style.width = "100%";
-        fieldimage.style.height = "100%";
+        fieldimage.style.border = "5px solid red";
+        fieldimage.style.position = "absolute"
         field.appendChild(fieldimage)
     }
     drawImage();
 
+
+    // calculate window
+    let newWidth;
+    let newHeight;
+    window.addEventListener('resize', event => updateAndLogWindow(event));
+
+    function updateAndLogWindow(event) {
+        newWidth = window.innerWidth;
+        newHeight = window.innerHeight;
+        console.log(`Window Size: ${newWidth}x${newHeight}`);
+
+        deleteAllPoints();
+        drawImage();
+        updateImageData();
+    }
+    updateAndLogWindow(null);
+
+
+
     // IMPORTANT ==> This is where the calculations based on REAL constants
-    var imageWidth;
-    var imageHeight;
+    let imageWidth;
+    let imageHeight;
 
     function updateImageData() {
-        imageWidth = field.childNodes[1].width;
-        imageHeight = field.childNodes[1].width * field.childNodes[1].naturalHeight / field.childNodes[1].naturalWidth;
+        imageWidth = field.childNodes[0].width;
+        console.log(field.childNodes[0].naturalHeight)
+        console.log(field.childNodes[0].naturalWidth)
+        imageHeight = field.childNodes[0].width * field.childNodes[0].naturalHeight / field.childNodes[0].naturalWidth;
     }
     updateImageData();
-    console.log(imageWidth + "BLAH" +  imageHeight)
 
     // Now that we have created the field, let's define our arrays: nodes   
-    var allNodes = [];
-    var appendNodes = [];
-    var destroyNodes = [];
-    var hideNodes = [];
-    var previous = null;
+    let allNodes = [];
+    let appendNodes = [];
+    let destroyNodes = [];
+    let hideNodes = [];
+    let previous = null;
     // global constant variable, set to 0, to count how many objects "exist" and to be used as a path
-    var translationCount = 0;
+    let translationCount = 0;
 
 
-    // Constants
-    var fieldXMeters = 0;
-    var fieldYMeters = 0;
+    // Constants 
+    let fieldXMeters = 651.22; // https://firstfrc.blob.core.windows.net/frc2026/FieldAssets/2026-field-dimension-dwgs.pdf
+    let fieldYMeters = 317.69; // https://firstfrc.blob.core.windows.net/frc2026/FieldAssets/2026-field-dimension-dwgs.pdf
 
    
     // prevent right click window on FIELD
     field.addEventListener("contextmenu", function(e){e.preventDefault();return false;});
 
+    let newLoggedButton;
     // Calculate Translation and Pose
     field
         .addEventListener("mousedown", 
@@ -73,8 +84,7 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
             // create translation
             switch (event.button) {
                 case 0: //LEFT
-                    console.log("Left Button Pressed.");
-                    var newLoggedButton = new SavedTranslation(event.clientX, event.clientY);
+                    newLoggedButton = new SavedTranslation(event.offsetX, event.offsetY);
                     if (previous != null) {                            
                         // if the two are close together, set previous to hypothetical new. do NOT append. 
                         if (!epsilonEquals2D(previous, newLoggedButton)) {
@@ -91,12 +101,9 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
                     previous = newLoggedButton;
                     break;
                 case 2: //RIGHT
-                    var newLoggedButton = new SavedTranslation(event.clientX, event.clientY);
+                    newLoggedButton = new SavedTranslation(event.offsetX, event.offsetY);
                     if (previous != null) {
-                        console.log("Right Button Pressed.");   
                         if (!epsilonEquals2D(previous, newLoggedButton)) {
-                            console.log("DEBUG ", previous.generateSemicolon())
-                            console.log("DEBUG OTHER", newLoggedButton.generateSemicolon());
                             console.log(epsilonEquals2D(previous,newLoggedButton))
                             newLoggedButton.updateCounter();
                             // saving data for previous
@@ -136,17 +143,40 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
                     < varianceEpsilonSquared;
     } 
 
-    function createPoint() {
-        // create div 
-        var div = document.createElement()
+
+
+    let zindice = 1;
+    function updatePoints() {
+        // create box
+        let boxxed_div = document.createElement('div');
+        // calculate based on input parameters
+        for (const i of appendNodes) {
+            console.log("updating points");
+            boxxed_div.style.backgroundColor = rainbowcolors[rainbowIndice++] % rainbowcolors.length;
+            boxxed_div.style.left = i.getX() + "px";
+            boxxed_div.style.top =  i.getY() + "px";
+            boxxed_div.innerHTML = "BKAH ASDJKHASDHKJASHDKJHASKJDH"
+            boxxed_div.style.position = "absolute"
+            boxxed_div.style.zIndex = zindice++;
+            console.log(zindice);
+            boxxed_div.style.alignContent = "center";
+            boxxed_div.style.color = rainbowcolors[rainbowIndice] % rainbowcolors.length;
+            document.getElementById("FIELD").appendChild(boxxed_div);
+        }
     }
 
-    function updatePoints() {
 
+    function deleteAllPoints() {
+        while (field.firstChild) {
+            if (field.firstChild == field.lastChild){
+                return;
+            }
+            field.removeChild(field.lastChild);
+        }
     }
 
     function updateAllPoints() {
-        
+        deleteAllPoints();
     }
 
     function updateButtons() {
