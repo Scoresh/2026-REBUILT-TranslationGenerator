@@ -256,24 +256,8 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
             super.mirrorAllianceFlip();
             this.angle = (angle + Math.PI) % (2 * Math.PI);
         }
-        hide() {
-            this.visible = false;
-        }
-        generateNode() {
-            return 
-        }
         generateString() {
-            return "Pose2d: " + this.translation.generateString() + ", with an angle of " + this.angle + " radians.";
-        }
-
-        getX(){
-            return this.translation.translationX;
-        }
-        getY() {
-            return this.translation.translationY;
-        }
-        getTranslation() {
-            return this.translation;
+            return "Pose2d: " + super.generateString() + ", with an angle of " + this.angle + " radians.";
         }
     }
 
