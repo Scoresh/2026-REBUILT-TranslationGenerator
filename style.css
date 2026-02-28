@@ -12,25 +12,28 @@ body {
 }
 
 
+
 .fullwidth {
     width:100%;
     background-color: var(--primary-color);
     align-items: center;
 }
 
+
+
 #FIELD {
     background-color: var(--tertiary-color);
     width:75%;
-    height:auto;
     margin-left:auto;
     margin-right:auto;
+    position:relative;
 }
 
 
-.BUTTON_FACTORY {
+#BUTTON_FACTORY {
     background-color: var(--secondary-color);
     display: flex;
     flex-direction:row;
     color: var(--secondary-color);
-
+    position:relative;
 }
