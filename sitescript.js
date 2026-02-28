@@ -14,6 +14,13 @@ const rainbowcolors = [
 
 // make sure everything is loaded
 document.addEventListener('DOMContentLoaded', (loadedEvent) => {
+    // IMPORTANT ==> This is where the calculations based on REAL constants
+    let imageWidth;
+    let imageHeight;
+
+
+
+
     // When site is first loaded, populate the FIELD div with the image and instantiate various variables
     const field = document.getElementById("FIELD");
     function drawImage() {
@@ -46,15 +53,13 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
 
 
 
-    // IMPORTANT ==> This is where the calculations based on REAL constants
-    let imageWidth;
-    let imageHeight;
+    
 
     function updateImageData() {
-        imageWidth = field.childNodes[0].width;
-        console.log(field.childNodes[0].naturalHeight)
-        console.log(field.childNodes[0].naturalWidth)
-        imageHeight = field.childNodes[0].width * field.childNodes[0].naturalHeight / field.childNodes[0].naturalWidth;
+        imageWidth = field.firstChild.width;
+        console.log(field.firstChild.naturalHeight)
+        console.log(field.firstChild.naturalWidth)
+        imageHeight = field.firstChild.width * field.firstChild.naturalHeight / field.firstChild.naturalWidth;
     }
     updateImageData();
 
@@ -63,7 +68,6 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
     let appendNodes = [];
     let destroyNodes = [];
     let hideNodes = [];
-    let previous = null;
     // global constant variable, set to 0, to count how many objects "exist" and to be used as a path
     let translationCount = 0;
 
@@ -75,7 +79,8 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
    
     // prevent right click window on FIELD
     field.addEventListener("contextmenu", function(e){e.preventDefault();return false;});
-
+    
+    let previous = null;
     let newLoggedButton;
     // Calculate Translation and Pose
     field
@@ -92,8 +97,9 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
                             allNodes.push(newLoggedButton);
                             appendNodes.push(newLoggedButton);
                         }
-                    } else {
-                        // n'th case to begin
+                    } else if (previous == null) {
+                        // n'th case to begin 
+                        console.log("Previous is Null.")
                         newLoggedButton.updateCounter();
                         allNodes.push(newLoggedButton);
                         appendNodes.push(newLoggedButton);
@@ -104,7 +110,6 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
                     newLoggedButton = new SavedTranslation(event.offsetX, event.offsetY);
                     if (previous != null) {
                         if (!epsilonEquals2D(previous, newLoggedButton)) {
-                            console.log(epsilonEquals2D(previous,newLoggedButton))
                             newLoggedButton.updateCounter();
                             // saving data for previous
                             var tempx = newLoggedButton.getX();
@@ -123,7 +128,7 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
                         }
                     }
                     break;
-                default: break;
+                default: return;
             }
             // post 
             updateButtons();
@@ -147,21 +152,23 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
 
     let zindice = 1;
     function updatePoints() {
-        // create box
-        let boxxed_div = document.createElement('div');
         // calculate based on input parameters
         for (const i of appendNodes) {
-            console.log("updating points");
-            boxxed_div.style.backgroundColor = rainbowcolors[rainbowIndice++] % rainbowcolors.length;
-            boxxed_div.style.left = i.getX() + "px";
-            boxxed_div.style.top =  i.getY() + "px";
-            boxxed_div.innerHTML = "BKAH ASDJKHASDHKJASHDKJHASKJDH"
-            boxxed_div.style.position = "absolute"
-            boxxed_div.style.zIndex = zindice++;
-            console.log(zindice);
-            boxxed_div.style.alignContent = "center";
-            boxxed_div.style.color = rainbowcolors[rainbowIndice] % rainbowcolors.length;
-            document.getElementById("FIELD").appendChild(boxxed_div);
+            if (appendNodes.length != 0) {
+                // create box
+                let boxxed_div = document.createElement('div');
+                console.log("updating points");
+                boxxed_div.style.backgroundColor = rainbowcolors[rainbowIndice++] % rainbowcolors.length;
+                boxxed_div.style.left = i.getX() + "px";
+                boxxed_div.style.top =  i.getY() + "px";
+                boxxed_div.innerHTML = "BKAH ASDJKHASDHKJASHDKJHASKJDH"
+                boxxed_div.style.position = "absolute"
+                boxxed_div.style.zIndex = zindice++;
+                boxxed_div.style.alignContent = "center";
+                boxxed_div.style.color = rainbowcolors[rainbowIndice] % rainbowcolors.length;
+                document.getElementById("FIELD").appendChild(boxxed_div);
+            }
+            
         }
     }
 
@@ -190,7 +197,7 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
     class SavedTranslation  {
         translationX = 0;
         translationY = 0;
-        visible = false;
+        visible = true;
         constructor(translationX, translationY) {
             this.translationX = translationX;
             this.translationY = translationY;
@@ -212,9 +219,6 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
         hide() {
             this.visible = false;
         }
-        generateNode() {
-
-        }
         generateString() {
             return "Translation2d: X: " + this.translationX + " Y: " + this.translationY;
         }
@@ -234,6 +238,7 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
     class SavedPose {
         translation;
         angle = 0;
+        visible = true;
         constructor(translation, angle) {
             this.translation = translation;
             this.angle = angle;
@@ -257,18 +262,15 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
         hide() {
             this.visible = false;
         }
-        generateNode() {
-            return 
-        }
         generateString() {
             return "Pose2d: " + this.translation.generateString() + ", with an angle of " + this.angle + " radians.";
         }
 
         getX(){
-            return this.translation.translationX;
+            return this.translation.getX();
         }
         getY() {
-            return this.translation.translationY;
+            return this.translation.getY();
         }
         getTranslation() {
             return this.translation;

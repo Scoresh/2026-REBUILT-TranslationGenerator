@@ -30,7 +30,7 @@ body {
 }
 
 
-.BUTTON_FACTORY {
+#BUTTON_FACTORY {
     background-color: var(--secondary-color);
     display: flex;
     flex-direction:row;
