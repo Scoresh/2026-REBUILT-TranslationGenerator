@@ -182,9 +182,6 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
         hide() {
             this.visible = false;
         }
-        generateNode() {
-
-        }
         generateString() {
             return "Translation2d: X: " + this.translationX + " Y: " + this.translationY;
         }
@@ -198,14 +195,12 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
         getTranslation() {
             return this;
         }
-
     }
 
-    class SavedPose {
-        translation;
+    class SavedPose extends SavedTranslation {
         angle = 0;
-        constructor(translation, angle) {
-            this.translation = translation;
+        constructor(translationX, translationY, angle) {
+            super(translationX, translationY);
             this.angle = angle;
         }
         updateCounter() {
@@ -215,33 +210,17 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
             return Math.atan2(y,x);
         }
         generate() {
-            return "new Pose2d(" + this.translation.generate() + ", Rotation2d.fromRadians(" + this.angle + "))";
+            return "new Pose2d(" + super.generate() + ", Rotation2d.fromRadians(" + this.angle + "))";
         }
         generateSemicolon() {
             return this.generate() + ";";
         }
         mirrorAllianceFlip() {
-            this.translation.mirrorAllianceFlip();
+            super.mirrorAllianceFlip();
             this.angle = (angle + Math.PI) % (2 * Math.PI);
         }
-        hide() {
-            this.visible = false;
-        }
-        generateNode() {
-            return 
-        }
         generateString() {
-            return "Pose2d: " + this.translation.generateString() + ", with an angle of " + this.angle + " radians.";
-        }
-
-        getX(){
-            return this.translation.translationX;
-        }
-        getY() {
-            return this.translation.translationY;
-        }
-        getTranslation() {
-            return this.translation;
+            return "Pose2d: " + super.generateString() + ", with an angle of " + this.angle + " radians.";
         }
     }
 
