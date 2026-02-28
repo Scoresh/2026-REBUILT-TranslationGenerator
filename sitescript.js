@@ -86,16 +86,20 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
     field
         .addEventListener("mousedown", 
         (event) => {
+            let rect = field.getBoundingClientRect();
+            let offsetX = event.clientX - rect.left; //
+            let offsetY = event.clientY - rect.top;
             // create translation
             switch (event.button) {
                 case 0: //LEFT
-                    newLoggedButton = new SavedTranslation(event.offsetX, event.offsetY);
+                    newLoggedButton = new SavedTranslation(offsetX, offsetY);
                     if (previous != null) {                            
                         // if the two are close together, set previous to hypothetical new. do NOT append. 
                         if (!epsilonEquals2D(previous, newLoggedButton)) {
                             newLoggedButton.updateCounter();
                             allNodes.push(newLoggedButton);
                             appendNodes.push(newLoggedButton);
+                            previous = newLoggedButton;
                         }
                     } else if (previous == null) {
                         // n'th case to begin 
@@ -103,11 +107,11 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
                         newLoggedButton.updateCounter();
                         allNodes.push(newLoggedButton);
                         appendNodes.push(newLoggedButton);
+                        previous = newLoggedButton;
                     }
-                    previous = newLoggedButton;
                     break;
                 case 2: //RIGHT
-                    newLoggedButton = new SavedTranslation(event.offsetX, event.offsetY);
+                    newLoggedButton = new SavedTranslation(offsetX, offsetY);
                     if (previous != null) {
                         let tempx = newLoggedButton.getX();
                         let tempy = newLoggedButton.getY();
@@ -130,7 +134,7 @@ document.addEventListener('DOMContentLoaded', (loadedEvent) => {
 
                     }
                     break;
-                default: return;
+                default: break;
             }
             // post 
             updateButtons();
